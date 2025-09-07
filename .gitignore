@@ -1,0 +1,14 @@
+# Ignore Python virtual environments
+.venv/
+venv/
+
+
+# Ignore raw FRED data
+data/raw/
+
+# macOS junk files
+.DS_Store
+
+# Python cache
+__pycache__/
+*.py[cod]
