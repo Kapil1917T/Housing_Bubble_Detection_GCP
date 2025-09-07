@@ -32,5 +32,5 @@ jobs:
 
       - name: Run data ingestion scripts
         run: |
-          python ../scripts/download_housing_starts_fred_data.py
-          python ../scripts/fetching_additional_indicators.py
+          python Housing_Bubble_Detection_GCP/scripts/download_housing_starts_fred_data.py
+          python Housing_Bubble_Detection_GCP/scripts/fetching_additional_indicators.py
