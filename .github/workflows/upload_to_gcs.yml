@@ -1,39 +1,51 @@
-# GitHub Actions workflow to upload raw FRED CSVs to Google Cloud Storage
+# 📛 Name of the workflow as it appears in the GitHub Actions tab
+name: upload-to-gcs
 
-name: Upload Raw CSVs to GCS  # Name of the workflow shown on the Actions tab
-
+# 🚀 This workflow is triggered manually via the GitHub Actions UI
 on:
-  schedule:
-    - cron: '0 0 1 * *'      # Run monthly on the 1st at 00:00 UTC
-  workflow_dispatch:          # Allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
-  upload-to-gcs:              # Job name
-    runs-on: ubuntu-latest    # Use the latest Ubuntu runner provided by GitHub
+  upload:  # 👷 Job ID (can be any name)
+    runs-on: ubuntu-latest  # 💻 Use GitHub's Ubuntu-based runner
 
     steps:
+      # 🧾 Step 1: Checkout the repository code into the runner
       - name: Checkout repository
-        uses: actions/checkout@v3  # Check out your code from the repo
+        uses: actions/checkout@v3  # ✅ Pulls the latest code from your branch
 
+      # 🐍 Step 2: Set up Python environment
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v4  # 📦 Official GitHub Action to configure Python
         with:
-          python-version: '3.10'  # Use Python version defined in .python-version
+          python-version: '3.11'  # 🔢 Specifies the version of Python to use
 
+      # 📦 Step 3: Install Python dependencies from requirements.txt
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Install all packages from requirements.txt
+          python -m pip install --upgrade pip  # 🔁 Upgrade pip to the latest version
+          pip install -r requirements.txt      # 📥 Install required Python packages
 
+      # 🧪 Step 4: Debug - Print current directory and structure
+      # This helps verify your working directory and whether scripts/data are present
       - name: Debug - Print current directory and contents
         run: |
-          pwd
-          ls -R
-          tree
+          pwd     # 📍 Print current working directory
+          ls -R   # 📂 Recursively list all files and folders (for debugging)
 
+      # 🐛 Step 5 (Optional Debug): Check if FRED_API_KEY is properly loaded
+      # ✅ Prints only partial info (first 5 characters and total length) to avoid leaking secrets
+      - name: Debug - Echo partial FRED_API_KEY (do not log full key!)
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}  # 🔒 Load secret from GitHub repo settings
+        run: |
+          echo "FRED_API_KEY first 5 chars: ${FRED_API_KEY:0:5}"   # 👀 Partial key to verify correct secret loading
+          echo "FRED_API_KEY length: ${#FRED_API_KEY}"             # 🔢 Length confirms key is non-empty
+
+      # 🚨 Step 6: Run your main data ingestion Python scripts
       - name: Run data ingestion scripts
         env:
-          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}  # 🔐 Secret passed to environment variable
         run: |
-          python scripts/download_housing_starts_fred_data.py
-          python scripts/fetching_additional_indicators.py
+          python scripts/download_housing_starts_fred_data.py       # 🏠 Downloads housing data from FRED
+          python scripts/fetching_additional_indicators.py          # 📊 Fetches macroeconomic indicators
