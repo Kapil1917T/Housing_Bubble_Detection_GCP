@@ -27,7 +27,7 @@ jobs:
 
       - name: Debug - Print current directory and contents
         run: |
-          pwd`
+          pwd
           ls -R
           tree
 
