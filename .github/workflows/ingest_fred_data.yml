@@ -32,7 +32,6 @@ jobs:
           tree
 
       - name: Run data ingestion scripts
-        working-directory: Housing_Bubble_Detection_GCP
         run: |
           python scripts/download_housing_starts_fred_data.py
           python scripts/fetching_additional_indicators.py
