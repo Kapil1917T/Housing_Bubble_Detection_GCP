@@ -27,12 +27,12 @@ jobs:
 
       - name: Debug - Print current directory and contents
         run: |
-          pwd
+          pwd`
           ls -R
           tree
 
       - name: Run data ingestion scripts
+        working-directory: Housing_Bubble_Detection_GCP
         run: |
-          cd Housing_Bubble_Detection_GCP
           python scripts/download_housing_starts_fred_data.py
           python scripts/fetching_additional_indicators.py
