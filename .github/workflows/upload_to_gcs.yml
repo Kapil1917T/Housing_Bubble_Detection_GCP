@@ -32,6 +32,8 @@ jobs:
           tree
 
       - name: Run data ingestion scripts
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
           python scripts/download_housing_starts_fred_data.py
           python scripts/fetching_additional_indicators.py
