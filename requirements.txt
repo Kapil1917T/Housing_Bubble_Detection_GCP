@@ -78,4 +78,5 @@ smmap==5.0.2
 
 # Misc
 Calculator==1.1.0
-narwhals==1.27.1python-dotenv==1.1.1
+narwhals==1.27.1
+python-dotenv==1.1.1
