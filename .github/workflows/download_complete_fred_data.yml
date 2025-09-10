@@ -1,5 +1,5 @@
 # 📛 Name of the workflow as it appears in the GitHub Actions tab
-name: upload-to-gcs
+name: Download Complete FRED Data with additional Indicators
 
 # 🚀 This workflow is triggered manually via the GitHub Actions UI
 on:

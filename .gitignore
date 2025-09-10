@@ -3,8 +3,9 @@
 venv/
 
 
-# Ignore raw FRED data
+# Ignore raw and cleaned FRED data
 data/raw/
+data/clean/
 
 # macOS junk files
 .DS_Store
@@ -12,3 +13,6 @@ data/raw/
 # Python cache
 __pycache__/
 *.py[cod]
+
+# Ignoring gcp_creds.json for security reasons
+gcp_creds.json
