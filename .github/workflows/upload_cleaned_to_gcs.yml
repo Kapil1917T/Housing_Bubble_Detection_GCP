@@ -1,52 +1,121 @@
-# File: .github/workflows/upload_cleaned_to_gcs.yml
-# -----------------------------------------------
-# Purpose: Automates the upload of cleaned CSV files to a GCS bucket
-# Triggered either manually or automatically when relevant files change
-# -----------------------------------------------
+name: Upload Cleaned CSVs to GCS
 
-    name: Upload Cleaned CSVs to GCS  # Name shown in GitHub Actions UI
+# 🧠 PURPOSE:
+# This GitHub Actions workflow performs the entire ETL pipeline for the Real Estate Bubble Detection project:
+# 1. Downloads raw economic indicator data from FRED using API scripts
+# 2. Cleans and transforms the raw CSVs using your data cleaning script
+# 3. Uploads the cleaned files to Google Cloud Storage (GCS)
+# ✅ Ensures all steps are automated without needing to commit data files to GitHub
 
-    on:
-      workflow_dispatch:  # 🔘 Allows manual triggering of the workflow from GitHub UI
-      push:               # 🔁 Automatically triggers on commits that affect:
-        paths:
-          - "data/clean/**"                    # ▶️ Any file under data/clean/ (i.e., new/updated cleaned CSVs)
-          - "scripts/upload_cleaned_data_to_gcs.py"  # ▶️ Or changes to the Python upload script
+on:
+  # 🔘 Manually trigger the workflow from the GitHub Actions UI
+  workflow_dispatch:
+
+  # ⏰ Scheduled trigger every Monday at 8 AM EST (12 PM UTC)
+  schedule:
+    - cron: '0 12 * * 1'
+
+jobs:
+  upload:
+    # 🖥️ Run this job on the latest Ubuntu virtual machine
+    runs-on: ubuntu-latest
+
+    steps:
+    # -----------------------------------------
+    # 🧾 STEP 1: Clone the repository onto the runner
+    # -----------------------------------------
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # -----------------------------------------
+    # 🐍 STEP 2: Set up Python environment
+    # This ensures compatibility with your scripts
+    # -----------------------------------------
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    # -----------------------------------------
+    # 📦 STEP 3: Install Python dependencies
+    # Uses pip to install everything from requirements.txt
+    # -----------------------------------------
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # -----------------------------------------
+    # 🔐 STEP 4: Write GCP service account credentials to a JSON file
+    # These are pulled securely from GitHub Secrets
+    # -----------------------------------------
+    - name: Write GCP credentials to file
+      run: echo "${{ secrets.GCP_CREDENTIALS_JSON }}" > gcp_creds.json
+
+    # -----------------------------------------
+    # 📂 STEP 5: Create local folders for raw and cleaned data
+    # Prevents "Folder not found" errors during execution
+    # -----------------------------------------
+    - name: Create folders for raw and clean data
+      run: |
+        mkdir -p data/raw
+        mkdir -p data/clean
+
+    # -----------------------------------------
+    # 🐛 STEP 6: Debug - Print partial FRED API key
+    # Helps confirm the secret is loading properly (without exposing it)
+    # -----------------------------------------
+    - name: Debug - Echo partial FRED_API_KEY
+      env:
+        FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+      run: |
+        echo "FRED_API_KEY first 5 chars: ${FRED_API_KEY:0:5}"
+        echo "FRED_API_KEY length: ${#FRED_API_KEY}"
+
+    # -----------------------------------------
+    # 🧲 STEP 7: Download raw FRED data from API
+    # Executes scripts to:
+    # - Pull ZIPs from FRED for housing + macro indicators
+    # - Extract and save raw .csvs into data/raw/
+    # -----------------------------------------
+    - name: Run FRED data ingestion scripts
+      env:
+        FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+      run: |
+        python scripts/download_housing_starts_fred_data.py       # 🏠 Housing starts/permits/completions
+        python scripts/fetching_additional_indicators.py          # 📉 CPI, UNRATE, FEDFUNDS, etc.
+
+    # -----------------------------------------
+    # 🧹 STEP 8: Run data cleaning logic
+    # This script reads from data/raw/ and writes cleaned .csvs to data/clean/
+    # -----------------------------------------
+    - name: Run data cleaning script
+      run: python scripts/clean_fred_data.py
+
+    # -----------------------------------------
+    # ☁️ STEP 9: Upload cleaned CSVs to Google Cloud Storage
+    # Uses your Python uploader script to move data/clean/*.csv to GCS
+    # Includes retry logic to recover from transient errors (e.g. network issues)
+    # -----------------------------------------
+    - name: Run uploader script to GCS
+      run: python scripts/upload_cleaned_data_to_gcs.py
+
     
-    jobs:
-      upload:             # 🧱 Name of the job
-        runs-on: ubuntu-latest  # 🖥️ GitHub-hosted Ubuntu environment for this job
-    
-        steps:  # ✅ Sequence of steps to run inside the job
-          - name: Checkout code
-            uses: actions/checkout@v3
-            # 📥 Clones the repo so that the workflow has access to your scripts and data folder
-    
-          - name: Set up Python
-            uses: actions/setup-python@v4
-            with:
-              python-version: "3.10"
-            # 🐍 Sets up a Python 3.10 environment in the runner
-    
-          - name: Install dependencies
-            run: |
-              python -m pip install --upgrade pip
-              pip install -r requirements.txt
-            # 📦 Installs required Python packages listed in your requirements.txt
-            # Make sure your requirements.txt includes google-cloud-storage and python-dotenv
-    
-          - name: Write GCP credentials to file
-            run: |
-              echo '${{ secrets.GCP_CREDENTIALS_JSON }}' > gcp_creds.json
-            # 🔐 Writes the GCP service account key (stored securely as a GitHub secret) to a JSON file
-            # This file will be read by the Python script to authenticate with GCP
-    
-          - name: Run uploader script to GCS
-            run: python scripts/upload_cleaned_data_to_gcs.py
-            env:
-              GOOGLE_APPLICATION_CREDENTIALS: gcp_creds.json
-              GCS_BUCKET_NAME: housing-bubble-predictor-data
-            # 🚀 Executes your Python script to upload cleaned CSVs from local folder to GCS bucket
-            # Sets environment variables:
-            # - GOOGLE_APPLICATION_CREDENTIALS: for GCP auth using the just-created JSON file
-            # - GCS_BUCKET_NAME: optionally passed if your Python script uses it via os.getenv()
+    # ------------------------------------------------
+    # 🚨 STEP 10: Log failure details (runs only if workflow fails)
+    # Helps you capture logs or trigger alerting integrations later
+    # ------------------------------------------------
+    - name: 🚨 Log failure summary (if anything fails)
+      if: failure()
+      # This step runs only if a previous step fails
+      run: |
+          echo "❌ Workflow failed! Check logs above ☝️"
+          echo "Consider re-running manually or inspecting the failing script."
+          echo "You can later add Slack/email alert integrations here."
+
+    # -----------------------------------------
+    # 🧼 STEP 11: Cleanup temp files (optional)
+    # You can uncomment this to delete raw data and credentials after job finishes
+    # -----------------------------------------
+    # - name: Cleanup
+    #   run: rm -rf data/ gcp_creds.json
