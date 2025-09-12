@@ -17,8 +17,7 @@ on:
 
 jobs:
   upload:
-    # 🖥️ Run this job on the latest Ubuntu virtual machine
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 🖥️ Run this job on the latest Ubuntu virtual machine
 
     steps:
     # -----------------------------------------
@@ -46,11 +45,12 @@ jobs:
         pip install -r requirements.txt
 
     # -----------------------------------------
-    # 🔐 STEP 4: Write GCP service account credentials to a JSON file
-    # These are pulled securely from GitHub Secrets
+    # 🔐 STEP 4: Decode base64 GCP credentials into a JSON file
+    # Avoids JSONDecodeError from improperly escaped newlines
     # -----------------------------------------
-    - name: Write GCP credentials to file
-      run: echo "${{ secrets.GCP_CREDENTIALS_JSON }}" > gcp_creds.json
+    - name: Write GCP credentials from base64 secret
+      run: |
+        echo "${{ secrets.GCP_CREDENTIALS_JSON }}" | base64 --decode > gcp_creds.json
 
     # -----------------------------------------
     # 📂 STEP 5: Create local folders for raw and cleaned data
@@ -95,23 +95,20 @@ jobs:
     # -----------------------------------------
     # ☁️ STEP 9: Upload cleaned CSVs to Google Cloud Storage
     # Uses your Python uploader script to move data/clean/*.csv to GCS
-    # Includes retry logic to recover from transient errors (e.g. network issues)
     # -----------------------------------------
     - name: Run uploader script to GCS
       run: python scripts/upload_cleaned_data_to_gcs.py
 
-    
     # ------------------------------------------------
     # 🚨 STEP 10: Log failure details (runs only if workflow fails)
     # Helps you capture logs or trigger alerting integrations later
     # ------------------------------------------------
     - name: 🚨 Log failure summary (if anything fails)
       if: failure()
-      # This step runs only if a previous step fails
       run: |
-          echo "❌ Workflow failed! Check logs above ☝️"
-          echo "Consider re-running manually or inspecting the failing script."
-          echo "You can later add Slack/email alert integrations here."
+        echo "❌ Workflow failed! Check logs above ☝️"
+        echo "Consider re-running manually or inspecting the failing script."
+        echo "You can later add Slack/email alert integrations here."
 
     # -----------------------------------------
     # 🧼 STEP 11: Cleanup temp files (optional)
