@@ -19,7 +19,7 @@ import requests
 import pandas as pd
 
 # 📁 Where the raw CSVs will be saved
-OUTPUT_PATH = "data/raw/"
+OUTPUT_PATH = "data/clean/"
 os.makedirs(OUTPUT_PATH, exist_ok=True)
 
 # 🔐 Load FRED API key securely from env variable

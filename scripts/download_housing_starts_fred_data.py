@@ -22,7 +22,7 @@ from io import BytesIO
 import zipfile
 
 # 📁 Directory to save raw CSVs
-OUTPUT_PATH = "data/raw/"
+OUTPUT_PATH = "data/clean/"
 os.makedirs(OUTPUT_PATH, exist_ok=True)
 
 # 🔐 Load FRED API key from environment variable
