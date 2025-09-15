@@ -32,4 +32,4 @@ jobs:
     - name: Run BigQuery Loader (GCS → BQ)
       env:
         GOOGLE_APPLICATION_CREDENTIALS: gcp_creds.json
-      run: python scripts/load_from_gcs_to_bq.py
+      run: python scripts/load_clean_data_from_gcs_to_bq.py
