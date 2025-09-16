@@ -36,8 +36,6 @@ file_to_table_map = {
     "PERMIT1.csv": "stg_PERMIT1",
     "PERMIT5.csv": "stg_PERMIT5",
     "PERMIT24.csv": "stg_PERMIT24",
-    "PRFI.csv": "stg_PRFI",
-    "RPI.csv": "stg_RPI",
     "UMCSENT.csv": "stg_UMCSENT",
     "UNRATE.csv": "stg_UNRATE",
 }
