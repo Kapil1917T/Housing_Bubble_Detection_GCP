@@ -53,6 +53,7 @@ for file_name, table_name in file_to_table_map.items():
     job_config = bigquery.LoadJobConfig(
         skip_leading_rows=1,
         source_format=bigquery.SourceFormat.CSV,
+        autodetect=True,
         schema=[
             bigquery.SchemaField("period_start_date", "DATE"),
             bigquery.SchemaField("value", "FLOAT64"),
