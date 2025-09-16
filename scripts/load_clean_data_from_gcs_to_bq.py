@@ -56,6 +56,8 @@ for file_name, table_name in file_to_table_map.items():
         schema=[
             bigquery.SchemaField("period_start_date", "DATE"),
             bigquery.SchemaField("value", "FLOAT64"),
+            bigquery.SchemaField("realtime_start", "DATE"),
+            bigquery.SchemaField("realtime_end", "DATE")
         ],
         field_delimiter=",",
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
