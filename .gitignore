@@ -15,5 +15,5 @@ __pycache__/
 *.py[cod]
 
 # Ignoring gcp_creds.json for security reasons
-# gcp_creds.json
+gcp_creds.json
 gcp_creds_base64.txt
