@@ -8,12 +8,9 @@ name: Upload Cleaned CSVs to GCS
 # ✅ Ensures all steps are automated without needing to commit data files to GitHub
 
 on:
-  # 🔘 Manually trigger the workflow from the GitHub Actions UI
-  workflow_dispatch:
-
-  # ⏰ Scheduled trigger every Monday at 8 AM EST (12 PM UTC)
-  schedule:
-    - cron: '0 12 * * 1'
+    schedule:
+      - cron: '0 5 1 * *'  # Runs at 5:00 UTC on the 1st of every month (1:00 AM EDT)
+    workflow_dispatch:     # 🧠 Manual trigger from GitHub UI
 
 jobs:
   upload:

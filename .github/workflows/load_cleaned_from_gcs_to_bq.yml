@@ -5,7 +5,11 @@ name: Load Cleaned Data from GCS to BigQuery
 # directly into BigQuery staging tables, bypassing local files.
 
 on:
-  workflow_dispatch:  # 🚀 Manually trigger from GitHub UI
+    schedule:
+      - cron: '30 5 1 * *'  # Runs 30 mins after the GCS upload, runs 1:30 AM EDT on 1st
+    workflow_dispatch:     # 🧠 Manual trigger from GitHub UI
+
+    
 
 jobs:
   load_to_bq:

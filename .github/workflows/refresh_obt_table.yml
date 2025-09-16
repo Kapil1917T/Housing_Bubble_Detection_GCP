@@ -1,0 +1,49 @@
+name: Monthly OBT Table Refresh
+
+on:
+  schedule:
+    # Runs at 6:00 UTC on the 1st of every month (2:00 AM EDT)
+    - cron: '0 6 1 * *'
+  workflow_dispatch:  # allows manual trigger
+
+jobs:
+  refresh-obt-table:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repo (not strictly necessary unless using repo SQL files)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install gcloud CLI
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'
+
+      # Step 3: Install Python dependencies (if needed)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Decode GCP credentials into gcp_creds.json
+      - name: Write GCP credentials from base64 secret
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS_JSON }}" | base64 --decode > gcp_creds.json
+
+      # Step 5: Authenticate with GCP
+      - name: Authenticate to Google Cloud
+        run: |
+          gcloud auth activate-service-account --key-file=gcp_creds.json
+          gcloud config set project housing-bubble-predictor
+
+      # Step 6: Run the BigQuery command to overwrite table from view
+      - name: Refresh table_obt_housing from view_obt_housing
+        run: |
+          bq query --use_legacy_sql=false \
+          "CREATE OR REPLACE TABLE housing_curated.table_obt_housing AS
+           SELECT * FROM housing_curated.view_obt_housing"
+
+
+
