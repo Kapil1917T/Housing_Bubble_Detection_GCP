@@ -6,7 +6,7 @@ name: Load Cleaned Data from GCS to BigQuery
 
 on:
     schedule:
-      - cron: '30 5 1 * *'  # Runs 30 mins after the GCS upload, runs 1:30 AM EDT on 1st
+      - cron: '30 5 1 * *'  # Runs 30 mins after the GCS upload (5:30 UTC), runs 1:30 AM EDT on 1st
     workflow_dispatch:     # 🧠 Manual trigger from GitHub UI
 
     
