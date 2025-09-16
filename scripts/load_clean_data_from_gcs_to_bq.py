@@ -53,15 +53,14 @@ for file_name, table_name in file_to_table_map.items():
     job_config = bigquery.LoadJobConfig(
         skip_leading_rows=1,
         source_format=bigquery.SourceFormat.CSV,
-        autodetect=True,
+        autodetect=False,
         schema=[
             bigquery.SchemaField("period_start_date", "DATE"),
-            bigquery.SchemaField("value", "FLOAT64"),
-            bigquery.SchemaField("realtime_start_date", "DATE", mode="NULLABLE"),
-            bigquery.SchemaField("realtime_end_date", "DATE", mode="NULLABLE")
+            bigquery.SchemaField("value", "FLOAT64")
         ],
         field_delimiter=",",
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
+        ignore_unknown_values=True
     )
 
     # === STEP 7: Load the table from GCS URI ===
