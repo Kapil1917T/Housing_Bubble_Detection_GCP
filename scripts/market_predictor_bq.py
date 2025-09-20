@@ -19,7 +19,7 @@ warnings.filterwarnings("ignore")
 # CONFIGURATION
 # ---------------------------------------------------------
 # Set your GCP project and dataset information
-PROJECT_ID = 'housing-bubble-predictor-data'  # GCP Project ID
+PROJECT_ID = 'housing-bubble-predictor'  # GCP Project ID
 DATASET_ID = 'housing_curated'  # Dataset name in BigQuery
 TABLE_ID = 'table_obt_housing'  # Source table containing OBT data
 OUTPUT_TABLE_ID = 'model_predictions'  # Destination table for storing predictions
