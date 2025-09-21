@@ -9,11 +9,25 @@ Author: Kapil Tare
 import pandas as pd
 import numpy as np
 from google.cloud import bigquery
+import os
+from google.oauth2 import service_account
 
 # -----------------------------------------
 # 1. Authenticate with GCP
 # -----------------------------------------
 # Make sure to set GOOGLE_APPLICATION_CREDENTIALS env variable before running
+# === STEP 1: Load GCP credentials ===
+GCP_CREDENTIALS_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "gcp_creds.json")
+credentials = service_account.Credentials.from_service_account_file(GCP_CREDENTIALS_PATH)
+
+# === STEP 2: Set GCS bucket and BigQuery project/dataset info ===
+# bucket_name = "housing-bubble-predictor-data"
+# gcs_folder = "cleaned_data"
+project_id = "housing-bubble-predictor"
+dataset_id = "housing_curated"
+
+# === STEP 3: Create BigQuery client with credentials ===
+client = bigquery.Client(credentials=credentials, project=project_id)
 client = bigquery.Client()
 
 # -----------------------------------------
