@@ -12,6 +12,8 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 from google.cloud import bigquery
 from sklearn.metrics import root_mean_squared_error, r2_score
 import matplotlib.pyplot as plt
+import os
+from google.oauth2 import service_account
 import seaborn as sns
 import warnings
 warnings.filterwarnings("ignore")
@@ -20,6 +22,9 @@ warnings.filterwarnings("ignore")
 # CONFIGURATION
 # ---------------------------------------------------------
 # Set your GCP project and dataset information
+GCP_CREDENTIALS_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "gcp_creds.json")
+credentials = service_account.Credentials.from_service_account_file(GCP_CREDENTIALS_PATH)
+
 PROJECT_ID = 'housing-bubble-predictor'  # GCP Project ID
 DATASET_ID = 'housing_curated'  # Dataset name in BigQuery
 TABLE_ID = 'table_obt_housing'  # Source table containing OBT data
@@ -40,7 +45,8 @@ def load_data():
     Load One Big Table (OBT) from BigQuery and create a quarter_start_date column
     for modeling, plus a formatted quarter_dash string column for labeling.
     """
-    client = bigquery.Client()
+    
+    client = bigquery.Client(credentials=credentials, project=PROJECT_ID)
     query = f"SELECT * FROM `{FULL_TABLE_ID}` ORDER BY quarter_id"
     df = client.query(query).to_dataframe()
 
