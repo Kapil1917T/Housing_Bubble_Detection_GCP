@@ -1,0 +1,37 @@
+name: Run Bubble Detection Script
+
+on:
+    schedule:
+      # Runs at 6:30 UTC on the 1st of every month (2:30 AM EDT)
+      - cron: '30 6 1 * *'
+    workflow_dispatch:  # allows manual trigger
+
+jobs:
+  run-bubble-detection:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository to access Python scripts
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python runtime environment
+      - name: 🧰 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Step 3: Install required Python packages
+      - name: 🔧 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Run the Bubble Detection script
+      - name: ▶️ Run bubble detection
+        run: |
+          python scripts/bubble_detection_bq.py
+
+      # Step 5: Confirm success
+      - name: ✅ Done
+        run: echo "Bubble detection pipeline completed successfully."

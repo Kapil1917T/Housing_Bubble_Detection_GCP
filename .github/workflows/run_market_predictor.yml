@@ -1,0 +1,37 @@
+name: Run Market Prediction Script
+
+on:
+  schedule:
+    # Runs at 6:30 UTC on the 1st of every month (2:30 AM EDT)
+    - cron: '30 6 1 * *'
+  workflow_dispatch:  # allows manual trigger
+
+jobs:
+  run-market-prediction:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository (required to access scripts, requirements.txt)
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python (we use 3.10 to match local dev environment)
+      - name: 🧰 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Step 3: Install Python dependencies listed in requirements.txt
+      - name: 🔧 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Run the Market Prediction pipeline script
+      - name: ▶️ Run market predictor
+        run: |
+          python scripts/market_predictor_bq.py
+
+      # Step 5: Print completion confirmation
+      - name: ✅ Done
+        run: echo "Market forecasting pipeline completed successfully."
