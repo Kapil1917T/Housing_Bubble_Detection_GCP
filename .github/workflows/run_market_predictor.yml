@@ -27,11 +27,22 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 4: Run the Market Prediction pipeline script
+      # Step 4: Set up Google Cloud SDK and authenticate
+      - name: Write GCP credentials from base64 secret
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS_JSON }}" | base64 --decode > gcp_creds.json
+
+      # Stpe 5: Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        run: |
+          gcloud auth activate-service-account --key-file=gcp_creds.json
+          gcloud config set project housing-bubble-predictor
+
+      # Step 6: Run the Market Prediction pipeline script
       - name: ▶️ Run market predictor
         run: |
           python scripts/market_predictor_bq.py
 
-      # Step 5: Print completion confirmation
+      # Step 7: Print completion confirmation
       - name: ✅ Done
         run: echo "Market forecasting pipeline completed successfully."
