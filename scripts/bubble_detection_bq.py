@@ -28,7 +28,7 @@ dataset_id = "housing_curated"
 
 # === STEP 3: Create BigQuery client with credentials ===
 client = bigquery.Client(credentials=credentials, project=project_id)
-client = bigquery.Client()
+# client = bigquery.Client()
 
 # -----------------------------------------
 # 2. Load Quarterly Housing Data (OBT Table)
