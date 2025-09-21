@@ -36,7 +36,7 @@ jobs:
       - name: Authenticate to Google Cloud
         run: |
           gcloud auth activate-service-account --key-file=gcp_creds.json
-          gcloud config set project Housing-bubble-predictor
+          gcloud config set project housing-bubble-predictor
 
       # Step 6: Run the Market Prediction pipeline script
       - name: ▶️ Run market predictor
