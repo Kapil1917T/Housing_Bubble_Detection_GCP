@@ -266,7 +266,7 @@ def save_to_bq(df, table_id):
     - Overwrite if RUN_MODE == 'manual'
     - Append if RUN_MODE == 'monthly'
     """
-    client = bigquery.Client()
+    client = bigquery.Client(credentials=credentials, project=PROJECT_ID)
     disposition = 'WRITE_TRUNCATE' if RUN_MODE == 'manual' else 'WRITE_APPEND'
     job_config = bigquery.LoadJobConfig(write_disposition=disposition)
     client.load_table_from_dataframe(df, table_id, job_config=job_config).result()
