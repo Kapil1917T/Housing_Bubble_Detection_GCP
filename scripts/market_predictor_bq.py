@@ -93,9 +93,9 @@ def select_features(df):
 # ---------------------------------------------------------
 def walk_forward(X, y, df_dates):
     models = {
-        'DecisionTree': DecisionTreeRegressor(),
-        'RandomForest': RandomForestRegressor(),
-        'XGBoost': XGBRegressor(verbosity=0)
+        'DecisionTree': DecisionTreeRegressor(random_state=42),
+        'RandomForest': RandomForestRegressor(random_state=42),
+        'XGBoost': XGBRegressor(verbosity=0, random_state=42)
     }
     grids = {
         'DecisionTree': {'max_depth': [3, 5, 10], 'min_samples_split': [2, 5]},
