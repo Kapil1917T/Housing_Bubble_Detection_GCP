@@ -10,7 +10,7 @@ threadpoolctl==3.5.0
 statsmodels==0.14.0
 db-dtypes>=1.0.0,<2.0.0
 xgboost==1.7.6
-shap==0.43.0
+shap>=0.43.0
 
 # Visualization
 matplotlib==3.10.0
