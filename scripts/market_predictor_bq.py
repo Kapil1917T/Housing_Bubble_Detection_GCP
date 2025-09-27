@@ -181,6 +181,35 @@ def save_to_bq(df, table_id):
     client.load_table_from_dataframe(df, table_id, job_config=job_config).result()
     print(f"✅ Uploaded to `{table_id}` as {RUN_MODE.upper()} run")
 
+
+# ---------------------------------------------------------
+# STEP 6: CONDITIONAL APPEND LOGIC
+# ---------------------------------------------------------
+def save_predictions_if_changed(new_df, bq_table):
+    client = bigquery.Client(credentials=credentials, project=PROJECT_ID)
+    existing_df = client.query(f"SELECT quarter_id, model_type, actual, predicted FROM `{bq_table}`").to_dataframe()
+    
+    disposition = 'WRITE_TRUNCATE' if RUN_MODE == 'manual' else 'WRITE_APPEND'
+    job_config = bigquery.LoadJobConfig(write_disposition=disposition)
+
+    if existing_df.empty:
+        client.load_table_from_dataframe(new_df, bq_table).result()
+        print(f"✅ First-time load: Uploaded {len(new_df)} rows to `{bq_table}`")
+        return
+
+    merged = pd.merge(
+        new_df, existing_df,
+        on=['quarter_id', 'model_type', 'actual'],
+        how='left', indicator=True
+    )
+    changed_df = merged[merged['_merge'] == 'left_only'].drop(columns=['_merge'])
+
+    if changed_df.empty:
+        print(f"⏭️ No changes detected — skipped uploading to `{bq_table}`.")
+    else:
+        client.load_table_from_dataframe(changed_df[new_df.columns], bq_table, job_config=job_config).result()
+        print(f"✅ Uploaded {len(changed_df)} new rows to `{bq_table}`")
+
 # ---------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------
@@ -194,8 +223,8 @@ def main():
     results_df = walk_forward(X_selected_df, y, df_clean[['quarter_id', 'quarter_start_date']])
     pred_df, metrics_df = split_outputs(results_df)
 
-    save_to_bq(pred_df, OUTPUT_FULL_TABLE_ID)
-    save_to_bq(metrics_df, METRICS_FULL_TABLE_ID)
+    save_predictions_if_changed(pred_df, OUTPUT_FULL_TABLE_ID)
+    save_predictions_if_changed(metrics_df, METRICS_FULL_TABLE_ID)
     print("🎯 Forecasting complete. Results saved.")
 
 if __name__ == '__main__':
