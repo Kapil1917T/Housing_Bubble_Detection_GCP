@@ -44,7 +44,7 @@ FULL_TABLE_ID = f'{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}'
 OUTPUT_FULL_TABLE_ID = f'{PROJECT_ID}.{DATASET_ID}.{OUTPUT_TABLE_ID}'
 METRICS_FULL_TABLE_ID = f'{PROJECT_ID}.{DATASET_ID}.{METRICS_TABLE_ID}'
 
-RUN_MODE = 'manual'  # 'manual' or 'monthly'
+RUN_MODE = 'monthly'  # 'manual' or 'monthly'
 
 # ---------------------------------------------------------
 # STEP 1: LOAD OBT DATA
