@@ -1,8 +1,8 @@
 # Core Data & Modeling
-pandas==1.5.3
-numpy==1.23.5
-scikit-learn==1.2.2
-scipy==1.15.2
+pandas>=1.5.3
+numpy>=1.23.5
+scikit-learn>=1.2.2
+scipy>=1.15.2
 python-dateutil==2.9.0.post0
 pytz==2025.1
 joblib==1.4.2
