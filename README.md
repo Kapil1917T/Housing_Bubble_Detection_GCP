@@ -6,6 +6,11 @@ Welcome to the Housing Bubble Detection & Forecasting project, built entirely on
 
 Over the course of several weeks, I developed this project from scratch with careful attention to **reproducibility**, **modularity**, and **economic realism**. The goal was not just to build another ML model, but to simulate what a real analytics pipeline for real estate or financial policy might look like inside a large organization.
 
+🌐 [**Live Streamlit App**](https://housingbubbledetection-es8gr954eezai7dkyzvv8k.streamlit.app/)  
+Experience the working dashboard in real time! No setup needed — just click and explore bubble risk trends, macro indicators, and model forecasts.
+
+> 🔁 The app auto-refreshes predictions and risk flags using GitHub Actions and BigQuery-backed pipelines.
+
 ---
 
 ## 📌 Project Context & Motivation
