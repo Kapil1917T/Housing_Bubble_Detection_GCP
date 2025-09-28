@@ -139,7 +139,7 @@ Feel free to connect or collaborate!
 
 ## ⛔ Disclaimer
 
-> This project is built for **educational purposes** and **personal portfolio** demonstration.  
+> This project is built for **personal portfolio** demonstration.  
 All data used is publicly available. Any insights or risk predictions should **not** be construed as **financial advice**. Always consult professional analysts or institutions before making economic decisions based on such models.
 
 ---
