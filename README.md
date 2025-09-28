@@ -133,8 +133,8 @@ If you're reviewing this project from a **hiring** or **academic** lens, here’
 
 ## 👨‍💼 Author
 
-**Kapil Tare**  \  
-M.S. Applied Data Science, Syracuse University  \  
+**Kapil Tare** \
+M.S. Applied Data Science, Syracuse University  \
 [LinkedIn](https://linkedin.com/in/kapiltare) • [GitHub](https://github.com/Kapil1917T)  
 
 Always happy to chat about forecasting, cloud infra, or macroeconomic modeling.  
@@ -144,7 +144,7 @@ Feel free to connect or collaborate!
 
 ## ⛔ Disclaimer
 
-> This project is built for **educational purposes** and **personal portfolio** demonstration.  
+> This project is built for **personal portfolio** demonstration.  
 All data used is publicly available. Any insights or risk predictions should **not** be construed as **financial advice**. Always consult professional analysts or institutions before making economic decisions based on such models.
 
 ---
