@@ -1,4 +1,5 @@
 import os
+import json
 from google.cloud import storage
 from google.oauth2 import service_account
 from dotenv import load_dotenv
@@ -7,10 +8,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # === GCP CREDENTIAL SETUP ===
-GCP_CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "gcp_creds.json")
+
+creds_json = os.environ.get("GCP_CREDENTIALS_JSON")
+info = json.loads(creds_json)
+# GCP_CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "gcp_creds.json")
+credentials = service_account.Credentials.from_service_account_info(info)
 
 # Load credentials from file
-credentials = service_account.Credentials.from_service_account_file(GCP_CREDENTIALS_PATH)
+# credentials = service_account.Credentials.from_service_account_file(GCP_CREDENTIALS_PATH)
 
 # Initialize storage client with explicit credentials
 storage_client = storage.Client(credentials=credentials)

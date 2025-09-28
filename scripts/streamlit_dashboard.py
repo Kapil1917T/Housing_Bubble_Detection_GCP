@@ -3,18 +3,26 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import os
+import json
 from google.cloud import bigquery
 from datetime import datetime
 from google.oauth2 import service_account
+from google.cloud import bigquery
 
 # --- SETUP ---
 st.set_page_config(page_title="Housing Market Risk Dashboard", layout="wide")
 st.title("\U0001F3E1 U.S. Housing Market Bubble & Risk Dashboard")
 
 # --- GCP CREDENTIALS ---
-GCP_CREDENTIALS_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "gcp_creds.json")
-credentials = service_account.Credentials.from_service_account_file(GCP_CREDENTIALS_PATH)
-client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+# GCP_CREDENTIALS_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "gcp_creds.json")
+# credentials = service_account.Credentials.from_service_account_file(GCP_CREDENTIALS_PATH)
+# client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+
+creds_json = os.environ.get("GCP_CREDENTIALS_JSON")
+info = json.loads(creds_json)
+credentials = service_account.Credentials.from_service_account_info(info)
+client = bigquery.Client(credentials=credentials, project=info["project_id"])
+
 
 # --- DATA LOADING ---
 @st.cache_data(show_spinner=True)

@@ -10,6 +10,7 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import os
+import json
 import warnings
 
 from sklearn.feature_selection import RFE
@@ -31,8 +32,12 @@ warnings.filterwarnings("ignore")
 # ---------------------------------------------------------
 # CONFIGURATION
 # ---------------------------------------------------------
-GCP_CREDENTIALS_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "gcp_creds.json")
-credentials = service_account.Credentials.from_service_account_file(GCP_CREDENTIALS_PATH)
+# GCP_CREDENTIALS_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "gcp_creds.json")
+# credentials = service_account.Credentials.from_service_account_file(GCP_CREDENTIALS_PATH)
+
+creds_json = os.environ.get("GCP_CREDENTIALS_JSON")
+info = json.loads(creds_json)
+credentials = service_account.Credentials.from_service_account_info(info)
 
 PROJECT_ID = 'housing-bubble-predictor'
 DATASET_ID = 'housing_curated'
@@ -50,7 +55,7 @@ RUN_MODE = 'monthly'  # 'manual' or 'monthly'
 # STEP 1: LOAD OBT DATA
 # ---------------------------------------------------------
 def load_data():
-    client = bigquery.Client(credentials=credentials, project=PROJECT_ID)
+    client = bigquery.Client(credentials=credentials, project=info["project_id"])
     query = f"SELECT * FROM `{FULL_TABLE_ID}` ORDER BY quarter_id"
     df = client.query(query).to_dataframe()
     df['quarter_start_date'] = pd.PeriodIndex(df['quarter_id'], freq='Q').to_timestamp()
