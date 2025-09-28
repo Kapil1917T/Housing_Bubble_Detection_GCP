@@ -128,8 +128,8 @@ If you're reviewing this project from a **hiring** or **academic** lens, here’
 
 ## 👨‍💼 Author
 
-**Kapil Tare** 
-M.S. Applied Data Science, Syracuse University  
+**Kapil Tare** \
+M.S. Applied Data Science, Syracuse University  \
 [LinkedIn](https://linkedin.com/in/kapiltare) • [GitHub](https://github.com/Kapil1917T)  
 
 Always happy to chat about forecasting, cloud infra, or macroeconomic modeling.  
